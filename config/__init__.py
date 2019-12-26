@@ -1,5 +1,10 @@
 # 是否开启登陆
 ENABLE_LOGIN = True
+<<<<<<< HEAD
+=======
+# 是否邮箱推送
+ENABLE_MAIL = True
+>>>>>>> update
 # 是否推送消息
 ENABLE_PUSH_MSG = True
 # 消息是否带上链接
@@ -34,4 +39,10 @@ MOBILE_REQUEST_HEADERS = {
 }
 
 # 消息推送设定
+<<<<<<< HEAD
 MSG_PUSH_CONFIG = []
+=======
+MSG_PUSH_CONFIG = []
+
+MSG_MAIL_CONFIG=[]
+>>>>>>> update

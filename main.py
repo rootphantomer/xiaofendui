@@ -4,6 +4,10 @@ import logging, random
 import itchat, config, data
 from config import option
 from crawler.zhidexiang import ZhiDeXiangCrawler
+<<<<<<< HEAD
+=======
+from mail import Mail
+>>>>>>> update
 
 
 def main_handler():
@@ -29,11 +33,16 @@ def main_handler():
 itchat发送消息
 '''
 def send_msg(post_detail, msg_push_config):
+<<<<<<< HEAD
+=======
+    #msg_push_config为非实例配置
+>>>>>>> update
     files = []
     msg = post_detail.format_msg(config.ENABLE_POST_URL, config.ENABLE_SHOW_SOURCE)
     logging.info('PostDetail -> %s' % str(post_detail))
     if not config.ENABLE_PUSH_MSG:
         logging.info('推送开关已关闭，消息未推送 -> \n%s' % msg)
+<<<<<<< HEAD
         return
     logging.info('准备推送 -> \n%s' % msg)
     for chatroom in msg_push_config:
@@ -46,6 +55,19 @@ def send_msg(post_detail, msg_push_config):
         if chatroom.user_name == '':
             logging.info('【%s】无法推送，找不到标志符，请保存群聊到通讯录后重新登录！' % (chatroom.nick_name))
             continue
+=======
+    else:
+        for chatroom in msg_push_config:
+            if not chatroom.enable_chatroom_push(post_detail.source):
+                logging.info(chatroom.nick_name + '：已关闭【' + post_detail.source + '】推送消息！')
+                continue
+            if not chatroom.enable_push(post_detail):
+                logging.info('当前【%s】不推送此消息！' % (chatroom.nick_name))
+                continue
+            if chatroom.user_name == '':
+                logging.info('【%s】无法推送，找不到标志符，请保存群聊到通讯录后重新登录！' % (chatroom.nick_name))
+                continue
+>>>>>>> update
         itchat.send_msg(msg, toUserName=chatroom.user_name)
         # 发送图片
         if chatroom.pic_enable and len(post_detail.images) != 0:
@@ -59,17 +81,33 @@ def send_msg(post_detail, msg_push_config):
                 itchat.send_image(path, toUserName=chatroom.user_name)
                 time.sleep(2)
         time.sleep(random.randint(2, 5))
+<<<<<<< HEAD
+=======
+    if not config.ENABLE_MAIL:
+        logging.info('邮箱开关已关闭，消息未推送 -> \n%s' % msg)
+        return
+    logging.info('准备推送 -> \n%s' % msg)
+    sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
+    sender.send(msg,'rootphantomy@hotmail.com')
+    
+>>>>>>> update
     # 删除临时文件
     for path in files:
         if os.path.exists(path):
             os.remove(path)
 
+<<<<<<< HEAD
+=======
+def select():
+    pass
+>>>>>>> update
 
 if __name__ == '__main__':
     # 日志格式设定
     logging.basicConfig(level=logging.INFO, format='\n%(asctime)s - %(levelname)s: %(message)s')
     logging.info('加载应用配置信息')
     option.auto_app_config()
+<<<<<<< HEAD
     if config.ENABLE_LOGIN:
         logging.info('请扫描二维码登录')
         itchat.auto_login(hotReload=True, enableCmdQR=config.CONSOLE_CMD_QR)
@@ -86,6 +124,9 @@ if __name__ == '__main__':
             config.MSG_PUSH_CONFIG[idx].user_name = room['UserName']
         for room in config.MSG_PUSH_CONFIG:
             logging.info('推送群聊：' + str(room))
+=======
+
+>>>>>>> update
     # 定时循环
     while True:
         main_handler()
