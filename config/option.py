@@ -1,10 +1,7 @@
 import sys, os
 import config, json5
 import getopt, logging
-<<<<<<< HEAD
-=======
 from mail import Mail
->>>>>>> update
 from wechat.chatroom import ChatRoomConfig
 
 def get_app_config():
@@ -31,10 +28,7 @@ def get_app_config():
 
 def apply_app_config(app_config):
     config.ENABLE_LOGIN = app_config['ENABLE_LOGIN']
-<<<<<<< HEAD
-=======
     config.ENABLE_MAIL = app_config['ENABLE_MAIL']
->>>>>>> update
     config.ENABLE_POST_URL = app_config['ENABLE_POST_URL']
     config.ENABLE_SHOW_SOURCE = app_config['ENABLE_SHOW_SOURCE']
     config.ENABLE_PUSH_MSG = app_config['ENABLE_PUSH_MSG']
@@ -48,15 +42,12 @@ def apply_app_config(app_config):
         chatrooms.append(get_chatroom(chatroom_config))
     # 更新推送消息设定
     config.MSG_PUSH_CONFIG = chatrooms
-<<<<<<< HEAD
-=======
     mailrooms = []
     #载入邮箱设置
     for mailroom_config in app_config['MAIL']:
         mailrooms.append(get_mailtroom(mailroom_config))
     # 更新推送消息设定
     config.MSG_MAIL_CONFIG = mailrooms
->>>>>>> update
 
 def get_chatroom(chatroom_config):
     nick_name = chatroom_config['NICK_NAME']
@@ -80,15 +71,12 @@ def get_chatroom(chatroom_config):
             keyword[resource][key.lower()] = resource_config[key]
     return ChatRoomConfig(nick_name=nick_name, user_name=user_name, msg_enable=msg_enable, keyword=keyword)
 
-<<<<<<< HEAD
-=======
 def get_mailtroom(mailroom_config):
     mail_host = mailroom_config['MAIL_HOST']
     mail_username = mailroom_config['MAIL_USER']
     mail_password = mailroom_config['MAIL_PWD']
     return Mail(mail_host=mail_host, mail_username=mail_username, mail_password=mail_password)
 
->>>>>>> update
 def auto_app_config():
     app_config = get_app_config()
     apply_app_config(app_config)

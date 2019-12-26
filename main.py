@@ -35,7 +35,7 @@ def send_msg(post_detail, msg_push_config):
     msg = post_detail.format_msg(config.ENABLE_POST_URL, config.ENABLE_SHOW_SOURCE)
     logging.info('PostDetail -> %s' % str(post_detail))
     if not config.ENABLE_PUSH_MSG:
-        logging.info('推送开关已关闭，消息未推送 -> \n%s' % msg)
+        logging.info('推送开关已关闭，消息未推送 -> \n')
     else:
         for chatroom in msg_push_config:
             if not chatroom.enable_chatroom_push(post_detail.source):
@@ -61,7 +61,7 @@ def send_msg(post_detail, msg_push_config):
                 time.sleep(2)
         time.sleep(random.randint(2, 5))
     if not config.ENABLE_MAIL:
-        logging.info('邮箱开关已关闭，消息未推送 -> \n%s' % msg)
+        logging.info('邮箱开关已关闭，消息未推送 -> \n')
         return
     logging.info('准备推送 -> \n%s' % msg)
     sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
