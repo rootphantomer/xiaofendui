@@ -34,6 +34,10 @@ def send_msg(post_detail, msg_push_config):
     files = []
     msg = post_detail.format_msg(config.ENABLE_POST_URL, config.ENABLE_SHOW_SOURCE)
     logging.info('PostDetail -> %s' % str(post_detail))
+    #遍历出post_detail里的value值
+    cut_post_value = select(post_detail.__dict__)
+    cut_msg_value = select(msg)
+
     if not config.ENABLE_PUSH_MSG:
         logging.info('推送开关已关闭，消息未推送 -> \n')
     else:
@@ -63,23 +67,61 @@ def send_msg(post_detail, msg_push_config):
     if not config.ENABLE_MAIL:
         logging.info('邮箱开关已关闭，消息未推送 -> \n')
         return
-    logging.info('准备推送 -> \n%s' % msg)
-    sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
-    sender.send(msg,'rootphantomy@hotmail.com')
+    else:
+        logging.info('准备推送 -> \n%s' % msg)
+#    sender = Mail(config.MSG_MAIL_CONFIG)
+        sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
+        for x in config.MSG_MAIL_USERS:
+            sender.send(msg,x)
     
     # 删除临时文件
     for path in files:
         if os.path.exists(path):
             os.remove(path)
 
-def select():
-    pass
+def select(list_dic):
+    list_all_dict(list_dic)
+    exit
+    return self.value
+
+#循环遍历出出INCLUDE
+def list_all_dict(self,dict_a):
+    if isinstance(dict_a,dict):
+        for x in range(len(dict_a)):
+            temp_key = dict_a.keys()[x]
+            temp_value = dict_a[temp_key]
+            if temp_key is 'INCLUDE':
+                self.msg_value.append(temp_value)
+            self.list_all_dict(temp_value)
+    elif isinstance(dict_a,list):
+        for k in range(len(k)):
+            temp_key = k.keys()[x]
+            temp_key = k[temp_key]
+            self.msg_value.append(temp_value)
+            self.list_all_dict(temp_value)
+    return self.msg_value
 
 if __name__ == '__main__':
     # 日志格式设定
     logging.basicConfig(level=logging.INFO, format='\n%(asctime)s - %(levelname)s: %(message)s')
     logging.info('加载应用配置信息')
     option.auto_app_config()
+    if config.ENABLE_LOGIN:
+        logging.info('请扫描二维码登录')
+        itchat.auto_login(hotReload=True, enableCmdQR=config.CONSOLE_CMD_QR)
+        logging.info('登录成功')
+        itchat.run(False, False)
+        chatrooms = itchat.get_chatrooms(contactOnly=True)
+        # 群聊名称
+        config_chatrooms = [room.nick_name for room in config.MSG_PUSH_CONFIG]
+        for index, room in enumerate(chatrooms):
+            logging.info('获取群聊通讯：' + room['NickName'] + '|' + room['UserName'])
+            if room['NickName'] not in config_chatrooms:
+                continue
+            idx = config_chatrooms.index(room['NickName'])
+            config.MSG_PUSH_CONFIG[idx].user_name = room['UserName']
+        for room in config.MSG_PUSH_CONFIG:
+            logging.info('推送群聊：' + str(room))
     # 定时循环
     while True:
         main_handler()

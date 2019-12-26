@@ -48,6 +48,7 @@ def apply_app_config(app_config):
         mailrooms.append(get_mailtroom(mailroom_config))
     # 更新推送消息设定
     config.MSG_MAIL_CONFIG = mailrooms
+    config.MSG_MAIL_USERS = app_config['MAIL_USERS']
 
 def get_chatroom(chatroom_config):
     nick_name = chatroom_config['NICK_NAME']

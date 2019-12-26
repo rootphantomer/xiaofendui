@@ -3,8 +3,8 @@ import config
 from email.mime.text import MIMEText
 from email.header import Header
 
-class Mail:
-    def __init__(self,mail_host,mail_username,mail_password):
+class Mail(object):
+    def __init__(self,mail_host='',mail_username='',mail_password=''):
         self.mail_host = mail_host
         self.mail_username = mail_username
         self.mail_password = mail_password
