@@ -15,11 +15,11 @@ class Mail(object):
         conten = to_msg
         message = MIMEText(conten, 'plain', 'utf-8')
         message['To'] = to_add
-        subject = '这个是标题'
+        subject = '有一条薅羊毛告警，赶紧查看一下'
         message['Subject'] = Header(subject, 'utf-8')
         try:
-            smtpObj = smtplib.SMTP()
-            smtpObj=smtplib.SMTP_SSL(self.mail_host,465)
+            smtpObj = smtplib.SMTP_SSL(host=self.mail_host)
+            smtpObj.connect(host=self.mail_host,port=465)
             smtpObj.login(self.mail_username, self.mail_password)
             smtpObj.sendmail(sender, receivers, message.as_string())
             print("邮件发送成功")

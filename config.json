@@ -41,7 +41,7 @@
             "MSG_ENABLE": ["0818tuan", "小屁屁挖白菜", "蘑菇小牙牙", "披着羊毛的魔鬼"],
             "KEYWORD": {
                 "0818tuan": {
-                    "INCLUDE": "jd.com|招行|凡科",
+                    "INCLUDE": "jd.com|京东",
                     "MALLS": ["京东"]
                 },
                 "蘑菇小牙牙": {
@@ -49,7 +49,7 @@
                     "MALLS": ["京东"]
                 },
                 "披着羊毛的魔鬼": {
-                    "INCLUDE": "taobao.com|tmall.com|tb.cn",
+                    "INCLUDE": "jd.com",
                     "EXCLUDE": "互助",
                     "MALLS": ["淘宝", "天猫"]
                 }
@@ -60,12 +60,12 @@
         {
             "MAIL_HOST":"smtp.qq.com",
             "MAIL_USER":"xxx@qq.com",
-            "MAIL_PWD":""
+            "MAIL_PWD":"xxxx"
         }
     ],
     "MAIL_USERS":[
-        "xxxxxxx@qq.com",
-        
+        "xxxx@qq.com",
+        "xxxx@Hotmail.com"
     ]
     
 

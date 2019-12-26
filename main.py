@@ -35,12 +35,20 @@ def send_msg(post_detail, msg_push_config):
     msg = post_detail.format_msg(config.ENABLE_POST_URL, config.ENABLE_SHOW_SOURCE)
     logging.info('PostDetail -> %s' % str(post_detail))
     #遍历出post_detail里的value值
-    cut_post_value = select(post_detail.__dict__)
-    cut_msg_value = select(msg)
-
+    cut_post_value = []
+    sig = 0
+    for x in post_detail.__dict__.values():
+        cut_post_value.append(x)
+    for x in range(len(cut_include_set)):
+        if cut_include_set[x] not in cut_post_value:
+            pass
+        else:
+            sig = 1
+            break
+    
     if not config.ENABLE_PUSH_MSG:
         logging.info('推送开关已关闭，消息未推送 -> \n')
-    else:
+    if (config.ENABLE_PUSH_MSG) and (sig == 1):
         for chatroom in msg_push_config:
             if not chatroom.enable_chatroom_push(post_detail.source):
                 logging.info(chatroom.nick_name + '：已关闭【' + post_detail.source + '】推送消息！')
@@ -64,10 +72,9 @@ def send_msg(post_detail, msg_push_config):
                 itchat.send_image(path, toUserName=chatroom.user_name)
                 time.sleep(2)
         time.sleep(random.randint(2, 5))
-    if not config.ENABLE_MAIL:
+    if (not config.ENABLE_MAIL):
         logging.info('邮箱开关已关闭，消息未推送 -> \n')
-        return
-    else:
+    if (config.ENABLE_MAIL) and (sig == 1):
         logging.info('准备推送 -> \n%s' % msg)
 #    sender = Mail(config.MSG_MAIL_CONFIG)
         sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
@@ -80,26 +87,29 @@ def send_msg(post_detail, msg_push_config):
             os.remove(path)
 
 def select(list_dic):
-    list_all_dict(list_dic)
-    exit
-    return self.value
+    value = list_all_dict(list_dic)
+    return value
 
 #循环遍历出出INCLUDE
-def list_all_dict(self,dict_a):
+def list_all_dict(dict_a):
     if isinstance(dict_a,dict):
         for x in range(len(dict_a)):
-            temp_key = dict_a.keys()[x]
+            temp_key = list(dict_a.keys())[x]
             temp_value = dict_a[temp_key]
-            if temp_key is 'INCLUDE':
-                self.msg_value.append(temp_value)
-            self.list_all_dict(temp_value)
+            if temp_key.upper() == 'INCLUDE':
+                cut = temp_value.split('|')
+                cut_include.extend(cut)
+            list_all_dict(temp_value)
     elif isinstance(dict_a,list):
-        for k in range(len(k)):
-            temp_key = k.keys()[x]
-            temp_key = k[temp_key]
-            self.msg_value.append(temp_value)
-            self.list_all_dict(temp_value)
-    return self.msg_value
+        for k in dict_a:
+            if isinstance(k,dict):
+                for x in range(len(k)):
+                    temp_key = list(k.keys())[x]
+                    temp_value = k[temp_key]
+                    if temp_key.upper() == 'INCLUDE':
+                        cut = temp_value.split('|')
+                        cut_include.extend(cut)
+                    list_all_dict(temp_value)
 
 if __name__ == '__main__':
     # 日志格式设定
@@ -123,6 +133,9 @@ if __name__ == '__main__':
         for room in config.MSG_PUSH_CONFIG:
             logging.info('推送群聊：' + str(room))
     # 定时循环
+    cut_include = []
+    list_all_dict(config.MSG_PUSH_CONFIG[0].keyword)
+    cut_include_set = list(set(cut_include))
     while True:
         main_handler()
         logging.info('等待时间/s：%s' % config.TASK_INTERVAL)
