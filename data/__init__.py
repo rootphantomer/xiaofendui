@@ -4,8 +4,8 @@ import os, config, json
 '''
 获取临时文件结果数据
 '''
-def get_tmp_result():
-    temp_file = os.path.join(config.BASE_TMP_DIR, 'tmp.json')
+def get_tmp_result(tmp):
+    temp_file = os.path.join(config.BASE_TMP_DIR, tmp)
     result = set()
     if os.path.exists(temp_file):
         with open(temp_file, 'r', encoding=config.UTF8_ENCODING) as f:
@@ -15,8 +15,8 @@ def get_tmp_result():
 '''
 保存临时结果数据
 '''
-def save_tmp_result(result, last_result):
-    temp_file = os.path.join(config.BASE_TMP_DIR, 'tmp.json')
+def save_tmp_result(result, last_result,tmp):
+    temp_file = os.path.join(config.BASE_TMP_DIR, tmp)
     # 存储结果
     with open(temp_file, 'w', encoding=config.UTF8_ENCODING) as f:
         # 超过数量清空

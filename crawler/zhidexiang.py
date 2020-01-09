@@ -17,7 +17,7 @@ class ZhiDeXiangCrawler(object):
     def __init__(self):
         pass
 
-    def crawl(self):
+    def crawler(self):
         post_list = []
         logging.info('Crawl url: ' + BASE_LIST_URL)
         result = crawler.get_resp_json(BASE_LIST_URL)

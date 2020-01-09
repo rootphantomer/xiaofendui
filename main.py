@@ -4,27 +4,56 @@ import logging, random
 import itchat, config, data
 from config import option
 from crawler.zhidexiang import ZhiDeXiangCrawler
+from crawler.zero818tuan import Zero818Crawler
 from mail import Mail
 
 
 def main_handler():
-    last_result = set()
-    result = set()
+    last_result1 = set()
+    last_result2 = set()
+    result1 = set()
+    result2 = set()
     try:
         # 创建临时目录
         if not os.path.exists(config.BASE_TMP_DIR):
             os.makedirs(config.BASE_TMP_DIR)
+        last_result1 = data.get_tmp_result(tmp='tmp.json')
         zhidexiang_crawler = ZhiDeXiangCrawler()
-        last_result = data.get_tmp_result()
-        for post_detail in zhidexiang_crawler.crawl():
-            result.add(post_detail.id)
-            if post_detail.id in last_result:
+        for post_detail in zhidexiang_crawler.crawler():
+            result1.add(post_detail.id)
+            if post_detail.id in last_result1:
                 continue
             send_msg(post_detail, config.MSG_PUSH_CONFIG)
+        #0818团最新线报
+        zero818_crawler = Zero818Crawler().crawler()
+        for x in range(len(zero818_crawler)):
+            result2.add(zero818_crawler[x].text[4:])
+            if zero818_crawler[x].text[4:] in last_result2:
+                continue
+            send_msg2(zero818_crawler[x], config.MSG_PUSH_CONFIG)
     except Exception as ex:
         logging.exception('任务错误: %s' % str(ex))
     finally:
-        data.save_tmp_result(result, last_result)
+        data.save_tmp_result(result1, last_result1,tmp='tmp.json')
+        data.save_tmp_result(result2, last_result2,tmp='tmp2.json')
+
+def send_msg2(crawler,msg_push_config):
+    logging.info('PostDetail -> %s' % str(crawler.text))
+    cut_post_value = crawler.text
+    sig = 0
+    for x in range(len(cut_include_set)):
+        if cut_include_set[x] not in cut_post_value:
+            pass
+        else:
+            sig = 1
+            break
+    if not config.ENABLE_PUSH_MSG:
+        logging.info('推送开关已关闭，消息未推送 -> \n')
+    if (config.ENABLE_MAIL) and (sig == 1):
+        logging.info('准备推送 -> \n%s' % cut_post_value)
+        sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
+        for x in config.MSG_MAIL_USERS:
+            sender.send(cut_post_value,x)
 
 '''
 itchat发送消息
@@ -39,6 +68,7 @@ def send_msg(post_detail, msg_push_config):
     sig = 0
     for x in post_detail.__dict__.values():
         cut_post_value.append(x)
+    #匹配需要监控的关键词
     for x in range(len(cut_include_set)):
         if cut_include_set[x] not in cut_post_value:
             pass
@@ -76,7 +106,6 @@ def send_msg(post_detail, msg_push_config):
         logging.info('邮箱开关已关闭，消息未推送 -> \n')
     if (config.ENABLE_MAIL) and (sig == 1):
         logging.info('准备推送 -> \n%s' % msg)
-#    sender = Mail(config.MSG_MAIL_CONFIG)
         sender = Mail(config.MSG_MAIL_CONFIG[0].mail_host,config.MSG_MAIL_CONFIG[0].mail_username,config.MSG_MAIL_CONFIG[0].mail_password)
         for x in config.MSG_MAIL_USERS:
             sender.send(msg,x)
